@@ -22,8 +22,8 @@ def draw_room(graph, width=2, **style):
             print("%%-%ds" % width % draw_square(graph, (x, y), style, width), end="")
         print()
 
-def generateRoom(numberOfwalls):
-    room = GridGivenSize(10, 10)
+def generateRoom(numberOfwalls, room_size):
+    room = GridGivenSize(room_size, room_size)
 
     walls = []
     for x in range(numberOfwalls):
@@ -35,35 +35,50 @@ def generateRoom(numberOfwalls):
     came_from, cost_so_far, min_distance = a_star_search(room, start, goal, 'manhattan')
     came_from, cost_so_far, eu_min_distance = a_star_search(room, start, goal, 'euclidean')
     came_from, cost_so_far, dia_min_distance = a_star_search(room, start, goal, 'diagonal')
-    print("[manhattan] Min distance is : ", min_distance)
-    print("[euclidean] Min distance is : ", eu_min_distance)
-    print("[diagonal] Min distance is : ", dia_min_distance)
+    came_from, cost_so_far, dij_min_distance = a_star_search(room, start, goal, 'dijkstra')
+    # print("[manhattan] Min distance is : ", min_distance)
+    # print("[euclidean] Min distance is : ", eu_min_distance)
+    # print("[diagonal] Min distance is : ", dia_min_distance)
     # draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
     # print()
-    return [min_distance, eu_min_distance, dia_min_distance]
+    return [min_distance, eu_min_distance, dia_min_distance, dij_min_distance]
 
+def simulation(num_of_rooms, room_size):
+    print('number of rooms: ', num_of_rooms)
+    print('room size: ', room_size)
+    overall_average = 0
+    count = 0
+    overall_average_eu = 0
+    count_eu = 0
+    overall_average_dia = 0
+    count_dia = 0
+    overall_average_dij = 0
+    count_dij = 0
+    for x in range(num_of_rooms): #create 100 rooms with 10 walls in them each
+        shortestDistance, shortestDistance_eu, shortestDistance_dia, shortestDistance_dij = generateRoom(40, room_size)
+        if shortestDistance != 0:
+            count += 1
+            overall_average += shortestDistance
+        if shortestDistance_eu != 0:
+            count_eu += 1
+            overall_average_eu += shortestDistance_eu
+        if shortestDistance_dia != 0:
+            count_dia += 1
+            overall_average_dia += shortestDistance_dia
+        if shortestDistance_dij != 0:
+            count_dij += 1
+            overall_average_dij += shortestDistance_dij
 
-overall_average = 0
-count = 0
-overall_average_eu = 0
-count_eu = 0
-overall_average_dia = 0
-count_dia = 0
-for x in range(10000): #create 100 rooms with 10 walls in them each
-    shortestDistance, shortestDistance_eu, shortestDistance_dia = generateRoom(40)
-    if shortestDistance != 0:
-        count += 1
-        overall_average += shortestDistance
-    if shortestDistance_eu != 0:
-        count_eu += 1
-        overall_average_eu += shortestDistance_eu
-    if shortestDistance_dia != 0:
-        count_dia += 1
-        overall_average_dia += shortestDistance_dia
+    overall_average = (overall_average / count)
+    overall_average_eu = (overall_average_eu / count_eu)
+    overall_average_dia = (overall_average_dia / count_dia)
+    overall_average_dij = (overall_average_dij / count_dij)
+    print("[manhattan] Average distance is : ", overall_average)
+    print("[euclidean] Average distance is : ", overall_average_eu)
+    print("[diagonal] Average distance is : ", overall_average_dia)
+    print("[dijkstra] Average distance is : ", overall_average_dij)
+    print()
 
-overall_average = (overall_average / count)
-overall_average_eu = (overall_average_eu / count_eu)
-overall_average_dia = (overall_average_dia / count_dia)
-print("[manhattan] Average distance is : ", overall_average)
-print("[euclidean] Average distance is : ", overall_average_eu)
-print("[diagonal] Average distance is : ", overall_average_dia)
+simulation(1000, 30)
+simulation(1000, 40)
+simulation(1000, 50)

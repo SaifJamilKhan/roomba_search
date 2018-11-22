@@ -45,6 +45,8 @@ def heuristic(a, b, option):
         distance = math.sqrt(pow((x1 - x2),2) + pow((y1 - y2),2))
     elif option == 'diagonal':
         distance = max(abs(x1 - x2), abs((y1 - y2)))
+    elif option == 'dijkstra':
+        distance = 0
     return distance
 
 def a_star_search(graph, start, goal, option):
