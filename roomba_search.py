@@ -14,7 +14,6 @@ def draw_square(graph, id, style, width):
     if 'number' in style and id in style['number']: r = "%d" % style['number'][id]
     if 'start' in style and id == style['start']: r = "A"
     if 'goal' in style and id == style['goal']: r = "Z"
-    if 'path' in style and id in style['path']: r = "@"
     if id in graph.walls: r = "#" * width
     return r
 
@@ -45,8 +44,8 @@ def generateRoom(numberOfwalls):
 	
 overall_average = 0
 count = 0
-for x in range(100): #create 100 rooms with 10 walls in them each
-	shortestDistance = generateRoom(20) 
+for x in range(10000): #create 100 rooms with 10 walls in them each
+	shortestDistance = generateRoom(40) 
 	if shortestDistance != 0:
 		count += 1
 		overall_average += shortestDistance
