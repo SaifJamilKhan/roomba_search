@@ -13,7 +13,7 @@ def draw_square(graph, id, style, width):
     if 'number' in style and id in style['number']: r = "%d" % style['number'][id]
     if 'start' in style and id == style['start']: r = "A"
     if 'goal' in style and id == style['goal']: r = "Z"
-    if id in graph.walls: r = "#" * width
+    if id in graph.walls: r = "#"
     return r
 
 def draw_room(graph, width=2, **style):
@@ -27,20 +27,28 @@ def generateRoom(numberOfwalls, room_size):
 
     walls = []
     for x in range(numberOfwalls):
-        walls.append((randint(0, 9),randint(0, 9)))
+        walls.append((randint(0, room_size),randint(0, room_size)))
 
     room.walls = walls
 
-    start, goal = (randint(0, 9),randint(0, 9)), (randint(0, 9),randint(0, 9))
+    start, goal = (randint(0, room_size),randint(0, room_size)), (randint(0, room_size),randint(0, room_size))
     came_from, cost_so_far, min_distance = a_star_search(room, start, goal, 'manhattan')
+    print('manhattan')
+    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+
+    print('euclidean')
     came_from, cost_so_far, eu_min_distance = a_star_search(room, start, goal, 'euclidean')
+    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+
+    print('diagonal')
     came_from, cost_so_far, dia_min_distance = a_star_search(room, start, goal, 'diagonal')
+    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+
+    print('dijkstra')
     came_from, cost_so_far, dij_min_distance = a_star_search(room, start, goal, 'dijkstra')
-    # print("[manhattan] Min distance is : ", min_distance)
-    # print("[euclidean] Min distance is : ", eu_min_distance)
-    # print("[diagonal] Min distance is : ", dia_min_distance)
-    # draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
-    # print()
+    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+
+    print()
     return [min_distance, eu_min_distance, dia_min_distance, dij_min_distance]
 
 def simulation(num_of_rooms, room_size):
@@ -55,7 +63,7 @@ def simulation(num_of_rooms, room_size):
     overall_average_dij = 0
     count_dij = 0
     for x in range(num_of_rooms): #create 100 rooms with 10 walls in them each
-        shortestDistance, shortestDistance_eu, shortestDistance_dia, shortestDistance_dij = generateRoom(40, room_size)
+        shortestDistance, shortestDistance_eu, shortestDistance_dia, shortestDistance_dij = generateRoom(room_size*10, room_size)
         if shortestDistance != 0:
             count += 1
             overall_average += shortestDistance
@@ -73,12 +81,14 @@ def simulation(num_of_rooms, room_size):
     overall_average_eu = (overall_average_eu / count_eu)
     overall_average_dia = (overall_average_dia / count_dia)
     overall_average_dij = (overall_average_dij / count_dij)
+    print("count ", count)
     print("[manhattan] Average distance is : ", overall_average)
     print("[euclidean] Average distance is : ", overall_average_eu)
     print("[diagonal] Average distance is : ", overall_average_dia)
     print("[dijkstra] Average distance is : ", overall_average_dij)
     print()
 
-simulation(1000, 30)
-simulation(1000, 40)
-simulation(1000, 50)
+simulation(3, 20)
+simulation(3, 40)
+# simulation(3, 50)
+# simulation(3, 100)
