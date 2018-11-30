@@ -1,5 +1,6 @@
 from astarimpl import *
 from random import randint
+import csv
 
 class GridGivenSize(SquareGrid):
     def __init__(self, width, height):
@@ -33,62 +34,91 @@ def generateRoom(numberOfwalls, room_size):
 
     start, goal = (randint(0, room_size),randint(0, room_size)), (randint(0, room_size),randint(0, room_size))
     came_from, cost_so_far, min_distance = a_star_search(room, start, goal, 'manhattan')
-    print('manhattan')
-    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+    # print('manhattan')
+    # draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
 
-    print('euclidean')
-    came_from, cost_so_far, eu_min_distance = a_star_search(room, start, goal, 'euclidean')
-    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+    # print('euclidean')
+    came_from, eu_cost_so_far, eu_min_distance = a_star_search(room, start, goal, 'euclidean')
+    # draw_room(room, width=3, number=eu_cost_so_far, start=start, goal=goal)
 
-    print('diagonal')
-    came_from, cost_so_far, dia_min_distance = a_star_search(room, start, goal, 'diagonal')
-    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+    # print('diagonal')
+    came_from, dia_cost_so_far, dia_min_distance = a_star_search(room, start, goal, 'diagonal')
+    # draw_room(room, width=3, number=dia_cost_so_far, start=start, goal=goal)
 
-    print('dijkstra')
-    came_from, cost_so_far, dij_min_distance = a_star_search(room, start, goal, 'dijkstra')
-    draw_room(room, width=3, number=cost_so_far, start=start, goal=goal)
+    # print('dijkstra')
+    came_from, dij_cost_so_far, dij_min_distance = a_star_search(room, start, goal, 'dijkstra')
+    # draw_room(room, width=3, number=dij_cost_so_far, start=start, goal=goal)
 
-    print()
-    return [min_distance, eu_min_distance, dia_min_distance, dij_min_distance]
+    # print()
+    return [min_distance, eu_min_distance, dia_min_distance, dij_min_distance, len(cost_so_far), len(eu_cost_so_far), len(dia_cost_so_far), len(dij_cost_so_far)]
 
 def simulation(num_of_rooms, room_size):
     print('number of rooms: ', num_of_rooms)
     print('room size: ', room_size)
-    overall_average = 0
-    count = 0
-    overall_average_eu = 0
-    count_eu = 0
-    overall_average_dia = 0
-    count_dia = 0
-    overall_average_dij = 0
-    count_dij = 0
-    for x in range(num_of_rooms): #create 100 rooms with 10 walls in them each
-        shortestDistance, shortestDistance_eu, shortestDistance_dia, shortestDistance_dij = generateRoom(room_size*10, room_size)
-        if shortestDistance != 0:
-            count += 1
-            overall_average += shortestDistance
-        if shortestDistance_eu != 0:
-            count_eu += 1
-            overall_average_eu += shortestDistance_eu
-        if shortestDistance_dia != 0:
-            count_dia += 1
-            overall_average_dia += shortestDistance_dia
-        if shortestDistance_dij != 0:
-            count_dij += 1
-            overall_average_dij += shortestDistance_dij
+    overall_distance, overall_distance_eu, overall_distance_dia, overall_distance_dij = 0, 0, 0, 0
+    overall_time, overall_time_eu, overall_time_dia, overall_time_dij = 0, 0, 0, 0
+    count, count_eu, count_dia, count_dij = 0, 0, 0, 0
+    avg_distance, avg_distance_eu, avg_distance_dia, avg_distance_dij = 0, 0, 0, 0
+    avg_time, avg_time_eu, avg_time_dia, avg_time_dij = 0, 0, 0, 0
 
-    overall_average = (overall_average / count)
-    overall_average_eu = (overall_average_eu / count_eu)
-    overall_average_dia = (overall_average_dia / count_dia)
-    overall_average_dij = (overall_average_dij / count_dij)
+    # for x in range(num_of_rooms): #create 100 rooms with 10 walls in them each
+    while (count < num_of_rooms):
+        results = generateRoom(room_size*10, room_size)
+        shortest_distance = results[0]
+        shortest_distance_eu = results[1]
+        shortest_distance_dia = results[2]
+        shortest_distance_dij = results[3]
+
+        time = results[4]
+        time_eu = results[5]
+        time_dia = results[6]
+        time_dij = results[7]
+
+        if shortest_distance != 0:
+            count += 1
+            overall_distance += shortest_distance
+            overall_time += time
+        if shortest_distance_eu != 0:
+            count_eu += 1
+            overall_distance_eu += shortest_distance_eu
+            overall_time_eu += time_eu
+        if shortest_distance_dia != 0:
+            count_dia += 1
+            overall_distance_dia += shortest_distance_dia
+            overall_time_dia += time_dia
+        if shortest_distance_dij != 0:
+            count_dij += 1
+            overall_distance_dij += shortest_distance_dij
+            overall_time_dij += time_dij
+
+    avg_distance = (overall_distance / count)
+    avg_distance_eu = (overall_distance_eu / count_eu)
+    avg_distance_dia = (overall_distance_dia / count_dia)
+    avg_distance_dij = (overall_distance_dij / count_dij)
+
+    avg_time = overall_time / count
+    avg_time_eu = overall_time_eu / count_eu
+    avg_time_dia = overall_time_dia / count_dia
+    avg_time_dij = overall_time_dij / count_dij
+
     print("count ", count)
-    print("[manhattan] Average distance is : ", overall_average)
-    print("[euclidean] Average distance is : ", overall_average_eu)
-    print("[diagonal] Average distance is : ", overall_average_dia)
-    print("[dijkstra] Average distance is : ", overall_average_dij)
+    print("[manhattan] Average distance is : ", avg_distance)
+    print("[euclidean] Average distance is : ", avg_distance_eu)
+    print("[diagonal] Average distance is : ", avg_distance_dia)
+    print("[dijkstra] Average distance is : ", avg_distance_dij)
+
+    print("[manhattan] Average time is : ", avg_time)
+    print("[euclidean] Average time is : ", avg_time_eu)
+    print("[diagonal] Average time is : ", avg_time_dia)
+    print("[dijkstra] Average time is : ", avg_time_dij)
     print()
 
-simulation(3, 20)
-simulation(3, 40)
-# simulation(3, 50)
-# simulation(3, 100)
+simulation(10, 20)
+simulation(10, 40)
+simulation(10, 50)
+simulation(10, 100)
+
+simulation(100, 20)
+simulation(100, 40)
+simulation(100, 50)
+simulation(100, 100)
