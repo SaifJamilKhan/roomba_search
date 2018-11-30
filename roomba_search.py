@@ -113,12 +113,11 @@ def simulation(num_of_rooms, room_size):
     print("[dijkstra] Average time is : ", avg_time_dij)
     print()
 
-simulation(10, 20)
-simulation(10, 40)
-simulation(10, 50)
-simulation(10, 100)
+    return [avg_distance, avg_distance_eu, avg_distance_dia, avg_distance_dij, avg_time, avg_time_eu, avg_time_dia, avg_time_dij]
 
-simulation(100, 20)
-simulation(100, 40)
-simulation(100, 50)
-simulation(100, 100)
+with open('data.csv', mode='w') as data_file:
+    data_writer = csv.writer(data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    for num_of_rooms in [10, 100, 500]:
+        for room_size in [20, 40, 50, 100]:
+            result = simulation(num_of_rooms, room_size)
+            data_writer.writerow(result)
