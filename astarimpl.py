@@ -20,19 +20,19 @@ class SquareGrid:
         self.height = height
         self.walls = []
 
-    def in_bounds(self, id):
+    def is_in_bounds(self, id):
         (x, y) = id
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def passable(self, id):
+    def isPassable(self, id):
         return id not in self.walls
 
     def neighbors(self, id):
         (x, y) = id
         results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
         if (x + y) % 2 == 0: results.reverse() # aesthetics
-        results = filter(self.in_bounds, results)
-        results = filter(self.passable, results)
+        results = filter(self.is_in_bounds, results)
+        results = filter(self.isPassable, results)
         return results
 
 def heuristic(a, b, option):
@@ -56,7 +56,7 @@ def a_star_search(graph, start, goal, option):
     cost_so_far = {}
     came_from[start] = None
     cost_so_far[start] = 0
-    min_distance = 9999999
+    min_distance = 9999999 # a high number is selected to any value is less than this number
     while not queue.empty():
         current = queue.get()
 

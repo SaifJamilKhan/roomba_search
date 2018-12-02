@@ -70,19 +70,19 @@ class SquareGrid:
         self.height = height
         self.walls = []
     
-    def in_bounds(self, id):
+    def is_in_bounds(self, id):
         (x, y) = id
         return 0 <= x < self.width and 0 <= y < self.height
     
-    def passable(self, id):
+    def isPassable(self, id):
         return id not in self.walls
     
     def neighbors(self, id):
         (x, y) = id
         results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
         if (x + y) % 2 == 0: results.reverse() # aesthetics
-        results = filter(self.in_bounds, results)
-        results = filter(self.passable, results)
+        results = filter(self.is_in_bounds, results)
+        results = filter(self.isPassable, results)
         return results
 
 class GridWithWeights(SquareGrid):
